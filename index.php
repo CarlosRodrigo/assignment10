@@ -18,6 +18,8 @@
                 <li><a href="timesheet/home.php">Home Page.</a></li>
                 <li><a href="docs/documentspecifications.docx">Document Specifications.</a></li>
                 <li><a href="https://github.com/cluth11/assignment10">Project Repository.</a></li>
+                <li><a href="docs/TimeSheet.sql">Schema.</a></li>
+                <li><a href="docs/TimeSheet_ER_Diagram.png">Entity Relationship Diagram.</a></li>
                                
             </ul>            
         </nav>
