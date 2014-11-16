@@ -1,0 +1,65 @@
+CREATE TABLE IF NOT EXISTS tblContact(
+    pmkContactId INT(11) NOT NULL AUTO_INCREMENT,
+    fldEmail VARCHAR(50) NOT NULL,
+    fldPhone VARCHAR(20) NOT NULL,
+    fldAdress VARCHAR(50) NOT NULL,
+    fldState VARCHAR(20) NOT NULL,
+    fldZipCode VARCHAR(20) NOT NULL,
+    fldCountry VARCHAR(20) NOT NULL,
+    
+    PRIMARY KEY(pmkContactId)
+);
+
+CREATE TABLE IF NOT EXISTS tblCompany(
+    pmkCompanyId INT(11) NOT NULL AUTO_INCREMENT,
+    fldCompanyName VARCHAR(50) NOT NULL,
+    fldFilePath VARCHAR(50) NOT NULL,
+    fnkContactId INT(11) NOT NULL,
+    
+    PRIMARY KEY(pmkCompanyId),
+    FOREIGN KEY(fnkContactId) REFERENCES tblContact(pmkContactId)
+);
+
+CREATE TABLE IF NOT EXISTS tblUser(
+	pmkUserId INT(11) NOT NULL AUTO_INCREMENT,
+    fldEmail VARCHAR(50) NOT NULL,
+    fldPassword VARCHAR(50) NOT NULL,
+    fldFirstName VARCHAR(30) NOT NULL,
+    fldLastName VARCHAR(30) NOT NULL,
+    fldType VARCHAR(20) NOT NULL,
+    fldGender VARCHAR(10) NOT NULL,
+    fldAddmissionDate DATE NOT NULL,
+    fldPosition VARCHAR(20) NOT NULL,
+    fldWorkHours INT(11) NOT NULL,
+    fnkCompanyId INT(11) NOT NULL,
+    
+    PRIMARY KEY(pmkUserId),
+    FOREIGN KEY(fnkCompanyId) REFERENCES tblCompany(pmkCompanyId)
+);
+
+CREATE TABLE IF NOT EXISTS tblProject(
+pmkProjectId INT(11) NOT NULL AUTO_INCREMENT,
+    fldDescription VARCHAR(255) NOT NULL,
+    fldBudget INT(11) NOT NULL,
+    fldExepctedHours INT(11) NOT NULL,
+    fldPDFFilePath VARCHAR(50) NOT NULL,
+    
+    fnkCompanyId INT(11) NOT NULL,
+    
+    PRIMARY KEY(pmkProjectId),
+    FOREIGN KEY(fnkCompanyId) REFERENCES tblCompany(pmkCompanyId)
+);
+
+CREATE TABLE IF NOT EXISTS tblWorksOn(
+    pmkWorksOnId INT(11) NOT NULL AUTO_INCREMENT,
+    fldDate DATE NOT NULL,
+    fldHours INT(11) NOT NULL,
+    fldDescription VARCHAR(255) NOT NULL,
+    
+    fnkUserId INT(11) NOT NULL,
+    fnkProjectId INT(11) NOT NULL,
+    
+    PRIMARY KEY(pmkWorksOnId),
+    FOREIGN KEY(fnkUserId) REFERENCES tblUser(pmkUserId),
+    FOREIGN KEY(fnkProjectId) REFERENCES tblUser(pmkUserId)
+);
