@@ -20,6 +20,7 @@
                 <li><a href="https://github.com/cluth11/assignment10">Project Repository.</a></li>
                 <li><a href="docs/TimeSheet.sql">Schema.</a></li>
                 <li><a href="docs/TimeSheet_ER_Diagram.png">Entity Relationship Diagram.</a></li>
+                <li><a href="docs/dataDictionary.html">Data Dictionary.</a></li>
                                
             </ul>            
         </nav>
