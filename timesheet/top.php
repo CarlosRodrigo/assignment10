@@ -62,7 +62,8 @@
             //
             //require_once('../lib/security.php');
             
-            /*if ($path_parts['filename'] == "project") {
+            if ($path_parts['filename'] == "index"
+                || $path_parts['filename'] == "project") {
                 #include "../lib/validation-functions.php";
                 #include "../lib/mail-message.php";
 
@@ -73,7 +74,7 @@
                 $dbName = strtoupper(get_current_user()) . '_Time_Sheet';
 
                 $thisDatabase = new myDatabase($dbUserName, $whichPass, $dbName);
-            }*/
+            }
             
         ?>	
         
