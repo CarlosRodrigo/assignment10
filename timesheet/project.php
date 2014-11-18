@@ -19,7 +19,7 @@ if (isset($_POST["btnSubmit"])) {
     $description = htmlentities($_POST["txtDescription"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $description;
 
-    $query = 'INSERT INTO tblProject SET fldName = ?, fldBudget = ?, fldExepctedHours = ?, fldDescription = ?';
+    $query = 'INSERT INTO tblProject SET fldName = ?, fldBudget = ?, fldExpectedHours = ?, fldDescription = ?';
 
     $results = $thisDatabase->insert($query, $dataRecord);
     
