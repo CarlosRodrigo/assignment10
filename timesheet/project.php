@@ -4,8 +4,28 @@ include("top.php");
 include("nav.php");
 
 if (isset($_POST["btnSubmit"])) {
-    print '<p>submit</p>';
+
+    $dataRecord = array();
+
+    $projectName = htmlentities($_POST["txtProjectName"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $projectName;
+
+    $budget = htmlentities($_POST["txtBudget"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $budget;
+
+    $expectedHours = htmlentities($_POST["txtExpectedHours"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $expectedHours;
+
+    $description = htmlentities($_POST["txtDescription"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $description;
+
+    $query = 'INSERT INTO tblProject SET fldName = ?, fldBudget = ?, fldExepctedHours = ?, fldDescription = ?';
+
+    $results = $thisDatabase->insert($query, $dataRecord);
+    
+    print_r($results);
 }
+
 ?>
     
     <div class="container">
@@ -14,29 +34,29 @@ if (isset($_POST["btnSubmit"])) {
             <div class="box">
                 <div class="col-lg-12">
                     <hr>
-                    <h2 class="intro-text text-center">Add Project</h2>
+                    <h2 class="intro-text text-center">Add <strong>Project</strong></h2>
                     <hr>
-                    <form role="form" action="<?php print $phpSelf; ?>">
+                    <form action="<?php print $phpSelf; ?>" method="post">
                         <div class="row">
                             <div class="form-group col-lg-4">
                                 <label>Project Name</label>
-                                <input type="text" class="form-control">
+                                <input type="text" name="txtProjectName" class="form-control">
                             </div>
                             <div class="form-group col-lg-4">
                                 <label>Budget</label>
-                                <input type="text" class="form-control">
+                                <input type="text" name="txtBudget" class="form-control">
                             </div>
                             <div class="form-group col-lg-4">
                                 <label>Expected Hours</label>
-                                <input type="email" class="form-control">
+                                <input type="text" name="txtExpectedHours" class="form-control">
                             </div>
                             <div class="form-group col-lg-4">
                                 <label>Description</label>
-                                <textarea class="form-control" rows="6"></textarea>
+                                <textarea name="txtDescription" class="form-control" rows="6"></textarea>
                             </div>
                             <div class="clearfix"></div>
                             <div class="form-group col-lg-12">
-                                <button type="submit" id="btnSubmit" class="btn btn-default">Add</button>
+                                <button type="submit" id="btnSubmit" name="btnSubmit" class="btn btn-default">Add</button>
                             </div>
                         </div>
                     </form>
