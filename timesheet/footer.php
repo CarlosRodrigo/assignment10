@@ -14,6 +14,12 @@
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
+    <!-- JQuery Bootstrap Validation -->
+    <script src="/js/jqBootstrapValidation.js"></script>
+    <script>
+        $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
+    </script>
+
 </body>
 
 </html>
