@@ -2,6 +2,11 @@
     include("top.php");
     //include("header.php"); 
     include("nav.php");
+
+    if(!isset($_SESSION['userID'])) {
+        header('location: login.php');
+        exit();
+    }
 ?>
 
     <div class="container">

@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -63,7 +64,8 @@
             //require_once('../lib/security.php');
             
             if ($path_parts['filename'] == "index"
-                || $path_parts['filename'] == "project") {
+                || $path_parts['filename'] == "project"
+                || $path_parts['filename'] == "user") {
                 #include "../lib/validation-functions.php";
                 #include "../lib/mail-message.php";
 
