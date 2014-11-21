@@ -17,7 +17,7 @@ function build_list_from_database($thisDatabase, $query) {
         $data = $row[1];
         print '<li class="list-group-item">' . $data . '
         <a href="lib/deleteUser.php?id=' . $id . '" id="btnDelete" name="btnDelete" type="submit" class="btn btn-danger" style="float:right">Delete</a>
-        <a href="modalEdit.php?id=' . $id .'" class="btn edit glyphicon glyphicon-edit" style="float:right"></a>
+        <a href="user.php?id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit" style="float:right"></a>
         </li>';
     }
 }

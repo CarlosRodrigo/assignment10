@@ -9,6 +9,10 @@ if(!isset($_SESSION['userID'])) {
     exit();
 }
 
+$email = "";
+$firstName = "";
+$lastName = "";
+
 if (isset($_POST["btnSubmit"])) {
     $dataRecord = array();
 
@@ -28,15 +32,46 @@ if (isset($_POST["btnSubmit"])) {
         $emailERROR = true;
         alert_danger("You were not able to add a user.");
     } else {
-        $query = 'INSERT INTO tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ?';
+        $query = 'SELECT * FROM tblUser WHERE fldEmail = ?';
+        $results = $thisDatabase->select($query, array($email));
+        if(count($results) > 0) {
+            $dataRecord[] = $email;
+            $query = 'UPDATE tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ? WHERE fldEmail = ?';
 
-        $results = $thisDatabase->insert($query, $dataRecord);
+            $results = $thisDatabase->insert($query, $dataRecord);
 
-        if($results == true) {
-            alert_success("You've successfully add a user.");
+            if($results == true) {
+                alert_success("You've successfully updated a user.");
+            } else {
+                alert_danger("You were not able to updated a user.");
+            }
+            $email = "";
+            $firstName = "";
+            $lastName = "";
         } else {
-            alert_danger("You were not able to add a user.");
+            $query = 'INSERT INTO tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ?';
+
+            $results = $thisDatabase->insert($query, $dataRecord);
+
+            if($results == true) {
+                alert_success("You've successfully add a user.");
+            } else {
+                alert_danger("You were not able to add a user.");
+            }
         }
+    }
+} else if (isset($_GET["id"])) {
+   
+    $id = $_GET["id"];
+    $dataRecord = array($id);
+
+    $query = "SELECT fldEmail, fldFirstName, fldLastName FROM tblUser WHERE pmkUserId = ?";
+    $results = $thisDatabase->select($query, $dataRecord);
+
+    foreach ($results as $row) {
+        $email = $row[0];
+        $firstName = $row[1];
+        $lastName = $row[2];
     }
 }
 ?>
@@ -76,20 +111,20 @@ if (isset($_POST["btnSubmit"])) {
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label>Email*</label>
-                                        <input type="email" name="txtEmail" class="form-control" required>
+                                        <input type="email" name="txtEmail" value="<?php print $email; ?>" class="form-control" required>
                                     </div>
                                     <div class="form-group">
                                         <label>First Name*</label>
-                                        <input type="text" name="txtFirstName" class="form-control" required>
+                                        <input type="text" name="txtFirstName" value="<?php print $firstName; ?>" class="form-control" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Last Name*</label>
-                                        <input type="text" name="txtLastName" class="form-control" required>
+                                        <input type="text" name="txtLastName" value="<?php print $lastName; ?>" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary" name="btnSubmit">Add</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary" name="btnSubmit">Save</button>
                                 </div>
                                 </form>
                             </div>
@@ -104,3 +139,25 @@ if (isset($_POST["btnSubmit"])) {
 <?php 
     include('footer.php');
 ?>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    var id = getUrlVars()["id"];
+    if(typeof id !== "undefined") {
+        //alert(id);
+        $('#myModal').modal('show');
+    }
+});
+</script>
