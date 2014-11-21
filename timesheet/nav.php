@@ -24,12 +24,14 @@
                     <li>
                         <a href="about.php">About</a>
                     </li>
+                    <?php if($_SESSION['userRole'] == 'admin') { ?>
                     <li>
                         <a href="user.php">User</a>
                     </li>
                     <li>
                         <a href="project.php">Project</a>
                     </li>
+                    <?php } ?>
                     <li>
                         <a href="contact.php">Contact</a>
                     </li>

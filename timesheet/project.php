@@ -4,7 +4,7 @@ include("top.php");
 include("nav.php");
 include("lib/functions.php");
 
-if(!isset($_SESSION['userID'])) {
+if(!isset($_SESSION['userID']) || $_SESSION['userRole'] != 'admin') {
     header('location: login.php');
     exit();
 }
