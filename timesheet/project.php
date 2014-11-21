@@ -61,9 +61,11 @@ if (isset($_POST["btnSubmit"])) {
                     </div>
 
                     <div class="row">
-                        <ul class="list-group">
-                            <?php build_list_from_database($thisDatabase, 'SELECT pmkProjectId, fldName FROM tblProject ORDER BY fldName');?>
-                        </ul>
+                        <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">Users</div>
+                            <?php build_list_from_database($thisDatabase, 'SELECT pmkProjectId, fldName, fldBudget, fldExpectedHours FROM tblProject ORDER BY fldName');?>
+                        </div>
                     </div>
 
                     <!-- Modal -->

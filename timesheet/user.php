@@ -60,7 +60,7 @@ if (isset($_POST["btnSubmit"])) {
             }
         }
     }
-} else if (isset($_GET["id"])) {
+} else if (isset($_GET["id"]) && isset($_GET["action"]) == "edit") {
    
     $id = $_GET["id"];
     $dataRecord = array($id);
@@ -93,10 +93,21 @@ if (isset($_POST["btnSubmit"])) {
                         </div>
                     </div>
                             
-                    <div class="row">
+                    <!--<div class="row">
                         <ul class="list-group">
                             <?php build_list_from_database($thisDatabase, 'SELECT pmkUserId, fldFirstName FROM tblUser ORDER BY fldFirstName');?>
                         </ul>
+                    </div>-->
+
+                    <div class="row">
+                        <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">Users</div>
+
+                        <?php
+                        build_list_from_database($thisDatabase, 'SELECT pmkUserId,fldEmail, fldFirstName, fldLastName FROM tblUser ORDER BY fldFirstName');
+                        ?>
+                        </div>
                     </div>
 
                     <!-- Modal -->
