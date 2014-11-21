@@ -10,11 +10,15 @@ function build_select_from_database($thisDatabase, $query) {
 }
 
 function build_list_from_database($thisDatabase, $query) {
-	$results = $thisDatabase->select($query);
+    $results = $thisDatabase->select($query);
 
-	foreach ($results as $row) {
-        $data = $row[0];
-        print '<li class="list-group-item">' . $data . '</li>';
+    foreach ($results as $row) {
+        $id = $row[0];
+        $data = $row[1];
+        print '<li class="list-group-item">' . $data . '
+        <a href="lib/deleteUser.php?id=' . $id . '" id="btnDelete" name="btnDelete" type="submit" class="btn btn-danger" style="float:right">Delete</a>
+        <a href="modalEdit.php?id=' . $id .'" class="btn edit glyphicon glyphicon-edit" style="float:right"></a>
+        </li>';
     }
 }
 

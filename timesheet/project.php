@@ -62,7 +62,7 @@ if (isset($_POST["btnSubmit"])) {
 
                     <div class="row">
                         <ul class="list-group">
-                            <?php build_list_from_database($thisDatabase, 'SELECT fldName FROM tblProject ORDER BY fldName');?>
+                            <?php build_list_from_database($thisDatabase, 'SELECT pmkProjectId, fldName FROM tblProject ORDER BY fldName');?>
                         </ul>
                     </div>
 
@@ -72,7 +72,7 @@ if (isset($_POST["btnSubmit"])) {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                    <h4 class="modal-title" id="exampleModalLabel">Add Project</h4>
+                                    <h4 class="modal-title" id="myModalLabel">Add Project</h4>
                                 </div>
                                 <form role="form" method="post" action="<?php print $phpSelf; ?>">
                                 <div class="modal-body">
