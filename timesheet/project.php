@@ -63,8 +63,8 @@ if (isset($_POST["btnSubmit"])) {
                     <div class="row">
                         <div class="panel panel-default">
                         <!-- Default panel contents -->
-                        <div class="panel-heading">Users</div>
-                            <?php build_list_from_database($thisDatabase, 'SELECT pmkProjectId, fldName, fldBudget, fldExpectedHours FROM tblProject ORDER BY fldName');?>
+                        <div class="panel-heading">Projects</div>
+                            <?php build_list_from_database($thisDatabase, 'project', 'SELECT pmkProjectId, fldName, fldBudget, fldExpectedHours FROM tblProject ORDER BY fldName');?>
                         </div>
                     </div>
 

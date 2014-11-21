@@ -9,7 +9,7 @@ function build_select_from_database($thisDatabase, $query) {
     }
 }
 
-function build_list_from_database($thisDatabase, $query) {
+function build_list_from_database($thisDatabase, $fileName, $query) {
     $results = $thisDatabase->select($query);
 
     print "<table class='table'>";
@@ -25,7 +25,7 @@ function build_list_from_database($thisDatabase, $query) {
             foreach ($keys as $key) {
                 if (!is_int($key)) {
                     $key = preg_replace(' /(?<! )(?<!^)(?<![A-Z])[A-Z]/', ' $0', substr($key, 3));
-                    print "<th>" . $key . "</th>";
+                    print "<th><a href='user.php?orderBy=lastName'>" . $key . "</a></th>";
                 }
             }
             print "</tr>";
@@ -42,7 +42,7 @@ function build_list_from_database($thisDatabase, $query) {
         }
         print '<td>
                 <a href="lib/deleteUser.php?id=' . $id . '" id="btnDelete" name="btnDelete" type="submit" class="btn btn-danger" style="float:right">Delete</a>
-                <a href="user.php?action=edit&id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit" style="float:right"></a>
+                <a href="' . $fileName .'.php?action=edit&id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit" style="float:right"></a>
                 </td>';
         print "</tr>";
     }

@@ -105,7 +105,7 @@ if (isset($_POST["btnSubmit"])) {
                         <div class="panel-heading">Users</div>
 
                         <?php
-                        build_list_from_database($thisDatabase, 'SELECT pmkUserId,fldEmail, fldFirstName, fldLastName FROM tblUser ORDER BY fldFirstName');
+                        build_list_from_database($thisDatabase, 'user', 'SELECT pmkUserId,fldEmail, fldFirstName, fldLastName FROM tblUser '.$orderBy);
                         ?>
                         </div>
                     </div>
