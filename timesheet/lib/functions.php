@@ -24,8 +24,8 @@ function build_list_from_database($thisDatabase, $fileName, $query) {
             $keys = array_keys($row);
             foreach ($keys as $key) {
                 if (!is_int($key)) {
-                    $key = preg_replace(' /(?<! )(?<!^)(?<![A-Z])[A-Z]/', ' $0', substr($key, 3));
-                    print "<th><a href='user.php?orderBy=lastName'>" . $key . "</a></th>";
+                    $keyName = preg_replace(' /(?<! )(?<!^)(?<![A-Z])[A-Z]/', ' $0', substr($key, 3));
+                    print "<th><a href='" . $fileName . ".php?orderBy=" . $key . "'>" . $keyName . "</a></th>";
                 }
             }
             print "</tr>";
@@ -41,8 +41,8 @@ function build_list_from_database($thisDatabase, $fileName, $query) {
             }
         }
         print '<td>
-                <a href="lib/deleteUser.php?id=' . $id . '" id="btnDelete" name="btnDelete" type="submit" class="btn btn-danger" style="float:right">Delete</a>
-                <a href="' . $fileName .'.php?action=edit&id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit" style="float:right"></a>
+                <a href="' . $fileName . '.php?action=delete&id=' . $id . '" id="btnDelete" name="btnDelete" type="submit" class="btn btn-danger" style="float:right">Delete</a>
+                <a href="' . $fileName . '.php?action=edit&id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit" style="float:right"></a>
                 </td>';
         print "</tr>";
     }

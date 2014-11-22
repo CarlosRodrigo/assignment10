@@ -4,7 +4,7 @@ include("top.php");
 include("nav.php");
 include("lib/functions.php");
 
-if(!isset($_SESSION['userID'])) {
+if(!isset($_SESSION['userID']) || $_SESSION['userRole'] != 'admin') {
     header('location: login.php');
     exit();
 }
@@ -12,6 +12,26 @@ if(!isset($_SESSION['userID'])) {
 $email = "";
 $firstName = "";
 $lastName = "";
+$orderBy = 'ORDER BY fldFirstName';
+
+$hiddenId = $_GET["id"];
+
+if(isset($_GET['orderBy'])) {
+    switch ($_GET['orderBy']) {
+        case 'fldEmail':
+            $orderBy = 'ORDER BY fldEmail';
+            break;
+        case 'fldLastName':
+            $orderBy = 'ORDER BY fldLastName';
+            break;
+        case 'pmkUserId':
+            $orderBy = 'ORDER BY pmkUserId';
+            break;
+        default:
+            $orderBy = 'ORDER BY fldFirstName';
+            break;
+    }
+}
 
 if (isset($_POST["btnSubmit"])) {
     $dataRecord = array();
@@ -34,9 +54,11 @@ if (isset($_POST["btnSubmit"])) {
     } else {
         $query = 'SELECT * FROM tblUser WHERE fldEmail = ?';
         $results = $thisDatabase->select($query, array($email));
-        if(count($results) > 0) {
-            $dataRecord[] = $email;
-            $query = 'UPDATE tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ? WHERE fldEmail = ?';
+        //if(count($results) > 0) {
+        if(!empty($_POST["id"])) {
+            $id = $_POST["id"];
+            $dataRecord[] = $id;
+            $query = 'UPDATE tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ? WHERE pmkUserId = ?';
 
             $results = $thisDatabase->insert($query, $dataRecord);
 
@@ -72,6 +94,22 @@ if (isset($_POST["btnSubmit"])) {
         $email = $row[0];
         $firstName = $row[1];
         $lastName = $row[2];
+    }
+} /*else if (isset($_GET["id"]) && isset($_GET["action"]) == "delete") {
+    $hiddenId = $_GET["id"];
+}*/
+else if (isset($_POST["btnDelete"])) {
+    //print_r($_POST);
+    $id = $_POST["id"];
+    $dataRecord = array($id);
+    $query = 'DELETE FROM tblUser WHERE pmkUserId = ?';
+
+    $results = $thisDatabase->insert($query, $dataRecord);
+
+    if($results == true) {
+        alert_success("You've successfully deleted a user.");
+    } else {
+        alert_danger("You were not able to delete a user.");
     }
 }
 ?>
@@ -121,6 +159,7 @@ if (isset($_POST["btnSubmit"])) {
                                 <form role="form" method="post" action="<?php print $phpSelf; ?>">
                                 <div class="modal-body">
                                     <div class="form-group">
+                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
                                         <label>Email*</label>
                                         <input type="email" name="txtEmail" value="<?php print $email; ?>" class="form-control" required>
                                     </div>
@@ -136,6 +175,27 @@ if (isset($_POST["btnSubmit"])) {
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-primary" name="btnSubmit">Save</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
+                                </div>
+                                <form role="form" method="post" action="<?php print $phpSelf; ?>">
+                                    <div class="modal-body">
+                                        <label>Are you sure you want to delete this record ?</label>
+                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
+                                    </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" name="btnDelete">Delete</button>
                                 </div>
                                 </form>
                             </div>
@@ -165,10 +225,11 @@ $(document).ready(function() {
         }
         return vars;
     }
-    var id = getUrlVars()["id"];
-    if(typeof id !== "undefined") {
-        //alert(id);
+    var action = getUrlVars()["action"];
+    if(action == "edit") {
         $('#myModal').modal('show');
+    } else if(action == "delete") {
+        $('#deleteModal').modal('show');
     }
 });
 </script>
