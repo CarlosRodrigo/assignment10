@@ -22,26 +22,8 @@ $orderBy = 'ORDER BY fldFirstName';
 $hiddenId = $_GET["id"];
 
 if(isset($_GET['orderBy'])) {
-    switch ($_GET['orderBy']) {
-        case 'fldEmail':
-            $orderBy = 'ORDER BY fldEmail';
-            break;
-        case 'fldLastName':
-            $orderBy = 'ORDER BY fldLastName';
-            break;
-        case 'fldPosition':
-            $orderBy = 'ORDER BY fldPosition';
-            break;
-        case 'fldWorkHours':
-            $orderBy = 'ORDER BY fldWorkHours';
-            break;
-        case 'pmkUserId':
-            $orderBy = 'ORDER BY pmkUserId';
-            break;
-        default:
-            $orderBy = 'ORDER BY fldFirstName';
-            break;
-    }
+    $orderBy = "ORDER BY ";
+    $orderBy .= htmlentities($_GET["orderBy"], ENT_QUOTES, "UTF-8");
 }
 
 if (isset($_POST["btnSubmit"])) {
@@ -77,7 +59,6 @@ if (isset($_POST["btnSubmit"])) {
     } else {
         $query = 'SELECT * FROM tblUser WHERE fldEmail = ?';
         $results = $thisDatabase->select($query, array($email));
-        //if(count($results) > 0) {
         if(!empty($_POST["id"])) {
             $id = $_POST["id"];
             $dataRecord[] = $id;
