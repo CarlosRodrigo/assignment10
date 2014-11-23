@@ -12,6 +12,11 @@ if(!isset($_SESSION['userID']) || $_SESSION['userRole'] != 'admin') {
 $email = "";
 $firstName = "";
 $lastName = "";
+$admissionDate = "";
+$position = "";
+$workHours = "";
+$gender = "male";
+$role = "collaborator";
 $orderBy = 'ORDER BY fldFirstName';
 
 $hiddenId = $_GET["id"];
@@ -23,6 +28,12 @@ if(isset($_GET['orderBy'])) {
             break;
         case 'fldLastName':
             $orderBy = 'ORDER BY fldLastName';
+            break;
+        case 'fldPosition':
+            $orderBy = 'ORDER BY fldPosition';
+            break;
+        case 'fldWorkHours':
+            $orderBy = 'ORDER BY fldWorkHours';
             break;
         case 'pmkUserId':
             $orderBy = 'ORDER BY pmkUserId';
@@ -36,9 +47,6 @@ if(isset($_GET['orderBy'])) {
 if (isset($_POST["btnSubmit"])) {
     $dataRecord = array();
 
-    $password = sha1(time());
-    $dataRecord[] = $password;
-
     $email = filter_var($_POST["txtEmail"], FILTER_SANITIZE_EMAIL);
     $dataRecord[] = $email;
 
@@ -47,6 +55,21 @@ if (isset($_POST["btnSubmit"])) {
 
     $lastName = htmlentities($_POST["txtLastName"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $lastName;
+
+    $admissionDate = htmlentities($_POST["txtAdmissionDate"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $admissionDate;
+
+    $position = htmlentities($_POST["txtPosition"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $position;
+
+    $workHours = htmlentities($_POST["txtWorkHours"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $workHours;
+
+    $gender = htmlentities($_POST["radGender"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $gender;
+
+    $role = htmlentities($_POST["radRole"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $role; 
 
     if ($email == "") {
         $emailERROR = true;
@@ -58,7 +81,7 @@ if (isset($_POST["btnSubmit"])) {
         if(!empty($_POST["id"])) {
             $id = $_POST["id"];
             $dataRecord[] = $id;
-            $query = 'UPDATE tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ? WHERE pmkUserId = ?';
+            $query = 'UPDATE tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = ?, fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ? WHERE pmkUserId = ?';
 
             $results = $thisDatabase->insert($query, $dataRecord);
 
@@ -71,7 +94,11 @@ if (isset($_POST["btnSubmit"])) {
             $firstName = "";
             $lastName = "";
         } else {
-            $query = 'INSERT INTO tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ?';
+
+            $password = sha1(time());
+            $dataRecord[] = $password;
+
+            $query = 'INSERT INTO tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = ?, fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ?, fldPassword = ?';
 
             $results = $thisDatabase->insert($query, $dataRecord);
 
@@ -87,24 +114,27 @@ if (isset($_POST["btnSubmit"])) {
     $id = $_GET["id"];
     $dataRecord = array($id);
 
-    $query = "SELECT fldEmail, fldFirstName, fldLastName FROM tblUser WHERE pmkUserId = ?";
+    $query = "SELECT fldEmail, fldFirstName, fldLastName, fldAdmissionDate, fldPosition, fldWorkHours, fldGender, fldType FROM tblUser WHERE pmkUserId = ?";
     $results = $thisDatabase->select($query, $dataRecord);
 
     foreach ($results as $row) {
         $email = $row[0];
         $firstName = $row[1];
         $lastName = $row[2];
+        $admissionDate = $row[3];
+        $position = $row[4];
+        $workHours = $row[5];
+        $gender = $row[6];
+        $role = $row[7];
     }
-} /*else if (isset($_GET["id"]) && isset($_GET["action"]) == "delete") {
-    $hiddenId = $_GET["id"];
-}*/
+}
 else if (isset($_POST["btnDelete"])) {
     //print_r($_POST);
     $id = $_POST["id"];
     $dataRecord = array($id);
     $query = 'DELETE FROM tblUser WHERE pmkUserId = ?';
 
-    $results = $thisDatabase->insert($query, $dataRecord);
+    $results = $thisDatabase->delete($query, $dataRecord);
 
     if($results == true) {
         alert_success("You've successfully deleted a user.");
@@ -130,12 +160,6 @@ else if (isset($_POST["btnDelete"])) {
                             </button>
                         </div>
                     </div>
-                            
-                    <!--<div class="row">
-                        <ul class="list-group">
-                            <?php build_list_from_database($thisDatabase, 'SELECT pmkUserId, fldFirstName FROM tblUser ORDER BY fldFirstName');?>
-                        </ul>
-                    </div>-->
 
                     <div class="row">
                         <div class="panel panel-default">
@@ -143,7 +167,7 @@ else if (isset($_POST["btnDelete"])) {
                         <div class="panel-heading">Users</div>
 
                         <?php
-                        build_list_from_database($thisDatabase, 'user', 'SELECT pmkUserId,fldEmail, fldFirstName, fldLastName FROM tblUser '.$orderBy);
+                        build_list_from_database($thisDatabase, 'user', 'SELECT pmkUserId,fldEmail, fldFirstName, fldLastName, fldPosition, fldWorkHours FROM tblUser '.$orderBy);
                         ?>
                         </div>
                     </div>
@@ -158,20 +182,54 @@ else if (isset($_POST["btnDelete"])) {
                                 </div>
                                 <form role="form" method="post" action="<?php print $phpSelf; ?>">
                                 <div class="modal-body">
-                                    <div class="form-group">
+                                    <div class="form-group col-lg-4">
                                         <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
                                         <label>Email*</label>
                                         <input type="email" name="txtEmail" value="<?php print $email; ?>" class="form-control" required>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group col-md-6">
                                         <label>First Name*</label>
                                         <input type="text" name="txtFirstName" value="<?php print $firstName; ?>" class="form-control" required>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group col-md-6">
                                         <label>Last Name*</label>
                                         <input type="text" name="txtLastName" value="<?php print $lastName; ?>" class="form-control" required>
                                     </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Admission Date*</label>
+                                        <input type="text" name="txtAdmissionDate" value="<?php print $admissionDate; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Position*</label>
+                                        <input type="text" name="txtPosition" value="<?php print $position; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Work Hours*</label>
+                                        <input type="text" name="txtWorkHours" value="<?php print $workHours; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Gender*</label>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radGender" id="radGenderMale" value="male" <?php if($gender=="male") print 'checked'?>>Male</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radGender" id="radGenderFemale" value="female" <?php if($gender=="female") print 'checked'?>>Female</label>
+                                        </div>
+                                        <div class="radio disabled">
+                                            <label><input type="radio" name="radGender" id="radGenderNone" value="none" <?php if($gender=="none") print 'checked'?>>None</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Role*</label>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radRole" value="admin" <?php if($role=="admin") print 'checked'?>>Admin</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radRole" value="collaborator" <?php if($role=="collaborator") print 'checked'?>>Collaborator</label>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div class="row"></div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                     <button type="submit" class="btn btn-primary" name="btnSubmit">Save</button>
