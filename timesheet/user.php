@@ -74,9 +74,16 @@ if (isset($_POST["btnSubmit"])) {
             $email = "";
             $firstName = "";
             $lastName = "";
+            $admissionDate = "";
+            $position = "";
+            $workHours = "";
+            $gender = "male";
+            $role = "collaborator";
+            $orderBy = 'ORDER BY fldFirstName';
         } else {
 
-            $password = sha1(time());
+            $password = generate_password();
+            //$passwordSecured = sha1($password);
             $dataRecord[] = $password;
 
             $query = 'INSERT INTO tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = ?, fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ?, fldPassword = ?';
@@ -84,10 +91,36 @@ if (isset($_POST["btnSubmit"])) {
             $results = $thisDatabase->insert($query, $dataRecord);
 
             if($results == true) {
+
+                //mails user
+                $to = $email;
+                $cc = "";
+                $bcc = "";
+                $from = "Time-Sheet <ccordeir@uvm.edu>";
+
+                // subject of mail should make sense to your form
+                $todaysDate = strftime("%x");
+                $subject = "Time-Sheet registration: " . $todaysDate;
+
+                $message = "Hello, ".$firstName . "<br><br>You have been added to Time-sheet.
+                <br><br>You can now access Time-Sheet on https://ccordeir.w3.uvm.edu/cs148/assignment10/timesheet
+                <br>Your username is: <strong>" . $email . "</strong> and password is: <strong>" . $password . "</strong><br>You can change it once you log in if you like.<br><br>Best,<br>Time-Sheet Team";
+
+                $mailed = sendMail($to, $cc, $bcc, $from, $subject, $message);
+
                 alert_success("You've successfully add a user.");
             } else {
                 alert_danger("You were not able to add a user.");
             }
+            $email = "";
+            $firstName = "";
+            $lastName = "";
+            $admissionDate = "";
+            $position = "";
+            $workHours = "";
+            $gender = "male";
+            $role = "collaborator";
+            $orderBy = 'ORDER BY fldFirstName';
         }
     }
 } else if (isset($_GET["id"]) && isset($_GET["action"]) == "edit") {
@@ -110,7 +143,6 @@ if (isset($_POST["btnSubmit"])) {
     }
 }
 else if (isset($_POST["btnDelete"])) {
-    //print_r($_POST);
     $id = $_POST["id"];
     $dataRecord = array($id);
     $query = 'DELETE FROM tblUser WHERE pmkUserId = ?';
