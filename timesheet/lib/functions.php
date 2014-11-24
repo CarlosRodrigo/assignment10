@@ -1,11 +1,15 @@
 <?php
-function build_select_from_database($thisDatabase, $query) {
+function build_select_from_database($thisDatabase, $query, $selectedId = 1) {
     $results = $thisDatabase->select($query);
 
     foreach ($results as $row) {
         $id = $row[0];
         $data = $row[1];
-        print '<option value="' . $id . '">' . $data . '</option>';
+        if($id == $selectedId) {
+            print '<option value="' . $id . '" selected>' . $data . '</option>';
+        } else {
+            print '<option value="' . $id . '">' . $data . '</option>';
+        }
     }
 }
 

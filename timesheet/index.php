@@ -28,6 +28,9 @@ $userId = $_SESSION['userID'];
                         $query = "SELECT fldAdmissionDate FROM tblUser WHERE pmkUserId = ?";
                         $startDate = $thisDatabase->select($query, array($userId));
                         $date = date("m/d/Y", strtotime($startDate[0][0]));
+
+                        $query = "SELECT fldHours, fldDescription, fnkProjectId FROM tblWorksOn WHERE fnkUserId = ?";
+                        $results = $thisDatabase->select($query, array($userId));
                         for($i = 0; $i < 20; $i++) {
                             $date = date("m/d/Y", strtotime($date . " + 1 day"));
                         ?>
@@ -41,17 +44,17 @@ $userId = $_SESSION['userID'];
                                 <div class="form-group">
                                     <label>Project*</label>
                                     <select class="form-control" id="slcProject" name="slcProject" required data-validation-required-message="required.">
-                                        <?php build_select_from_database($thisDatabase, 'SELECT pmkProjectId, fldName FROM tblProject ORDER BY fldName'); ?>
+                                        <?php build_select_from_database($thisDatabase, 'SELECT pmkProjectId, fldName FROM tblProject ORDER BY fldName', $results[$i]['fnkProjectId']); ?>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Hours*</label>
-                                    <input type="text" class="form-control" placeholder="04:00" id="txtHours" name="txtHours" required data-validation-required-message="required.">
+                                    <input type="text" class="form-control" value="<?php print $results[$i]['fldHours'] ?>" placeholder="04:00" id="txtHours" name="txtHours" required data-validation-required-message="required.">
                                     <p class="help-block text-danger"></p>
                                 </div>
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" id="txtDescription" name="txtDescription"></textarea>
+                                    <textarea class="form-control" id="txtDescription" name="txtDescription"><?php print $results[$i]['fldDescription']; ?></textarea>
                                     <p class="help-block text-danger"></p>
                                 </div>
                                 <div class="col-lg-12 text-center">
