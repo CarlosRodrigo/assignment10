@@ -4,16 +4,30 @@ include("top.php");
 include("nav.php");
 include("lib/functions.php");
 
-if(!isset($_SESSION['userID'])) {
+if(!isset($_SESSION['userID']) || $_SESSION['userRole'] != 'admin') {
     header('location: login.php');
     exit();
 }
 
+$email = "";
+$firstName = "";
+$lastName = "";
+$admissionDate = "";
+$position = "";
+$workHours = "";
+$gender = "male";
+$role = "collaborator";
+$orderBy = 'ORDER BY fldFirstName';
+
+$hiddenId = $_GET["id"];
+
+if(isset($_GET['orderBy'])) {
+    $orderBy = "ORDER BY ";
+    $orderBy .= htmlentities($_GET["orderBy"], ENT_QUOTES, "UTF-8");
+}
+
 if (isset($_POST["btnSubmit"])) {
     $dataRecord = array();
-
-    $password = sha1(time());
-    $dataRecord[] = $password;
 
     $email = filter_var($_POST["txtEmail"], FILTER_SANITIZE_EMAIL);
     $dataRecord[] = $email;
@@ -24,19 +38,121 @@ if (isset($_POST["btnSubmit"])) {
     $lastName = htmlentities($_POST["txtLastName"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $lastName;
 
+    $admissionDate = htmlentities($_POST["txtAdmissionDate"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $admissionDate;
+
+    $position = htmlentities($_POST["txtPosition"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $position;
+
+    $workHours = htmlentities($_POST["txtWorkHours"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $workHours;
+
+    $gender = htmlentities($_POST["radGender"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $gender;
+
+    $role = htmlentities($_POST["radRole"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $role; 
+
     if ($email == "") {
         $emailERROR = true;
         alert_danger("You were not able to add a user.");
     } else {
-        $query = 'INSERT INTO tblUser SET fldPassword = ?, fldEmail = ?, fldFirstName = ?, fldLastName = ?';
+        $query = 'SELECT * FROM tblUser WHERE fldEmail = ?';
+        $results = $thisDatabase->select($query, array($email));
+        if(!empty($_POST["id"])) {
+            $id = $_POST["id"];
+            $dataRecord[] = $id;
+            $query = "UPDATE tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = STR_TO_DATE(?, '%m/%d/%Y'), fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ? WHERE pmkUserId = ?";
 
-        $results = $thisDatabase->insert($query, $dataRecord);
+            $results = $thisDatabase->insert($query, $dataRecord);
 
-        if($results == true) {
-            alert_success("You've successfully add a user.");
+            if($results == true) {
+                alert_success("You've successfully updated a user.");
+            } else {
+                alert_danger("You were not able to updated a user.");
+            }
+            $email = "";
+            $firstName = "";
+            $lastName = "";
+            $admissionDate = "";
+            $position = "";
+            $workHours = "";
+            $gender = "male";
+            $role = "collaborator";
+            $orderBy = 'ORDER BY fldFirstName';
         } else {
-            alert_danger("You were not able to add a user.");
+
+            $password = generate_password();
+            $securedPassword = sha1($password);
+            $dataRecord[] = $securedPassword;
+
+            $query = "INSERT INTO tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = STR_TO_DATE(?, '%m/%d/%Y'), fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ?, fldPassword = ?";
+
+            $results = $thisDatabase->insert($query, $dataRecord);
+
+            if($results == true) {
+
+                //mails user
+                $to = $email;
+                $cc = "";
+                $bcc = "";
+                $from = "Time-Sheet <ccordeir@uvm.edu>";
+
+                // subject of mail should make sense to your form
+                $todaysDate = strftime("%x");
+                $subject = "Time-Sheet registration: " . $todaysDate;
+
+                $message = "Hello, ".$firstName . "<br><br>You have been added to Time-sheet.
+                <br><br>You can now access Time-Sheet on https://ccordeir.w3.uvm.edu/cs148/assignment10/timesheet
+                <br>Your username is: <strong>" . $email . "</strong> and password is: <strong>" . $password . "</strong><br>You can change it once you log in if you like.<br><br>Best,<br>Time-Sheet Team";
+
+                $mailed = sendMail($to, $cc, $bcc, $from, $subject, $message);
+
+                alert_success("You've successfully add a user.");
+            } else {
+                alert_danger("You were not able to add a user.");
+            }
+            $email = "";
+            $firstName = "";
+            $lastName = "";
+            $admissionDate = "";
+            $position = "";
+            $workHours = "";
+            $gender = "male";
+            $role = "collaborator";
+            $orderBy = 'ORDER BY fldFirstName';
         }
+    }
+} else if (isset($_GET["id"]) && isset($_GET["action"]) == "edit") {
+   
+    $id = $_GET["id"];
+    $dataRecord = array($id);
+
+    $query = "SELECT fldEmail, fldFirstName, fldLastName, fldAdmissionDate, fldPosition, fldWorkHours, fldGender, fldType FROM tblUser WHERE pmkUserId = ?";
+    $results = $thisDatabase->select($query, $dataRecord);
+
+    foreach ($results as $row) {
+        $email = $row[0];
+        $firstName = $row[1];
+        $lastName = $row[2];
+        $admissionDate = date("m/d/Y", strtotime($row[3]));
+        $position = $row[4];
+        $workHours = $row[5];
+        $gender = $row[6];
+        $role = $row[7];
+    }
+}
+else if (isset($_POST["btnDelete"])) {
+    $id = $_POST["id"];
+    $dataRecord = array($id);
+    $query = 'DELETE FROM tblUser WHERE pmkUserId = ?';
+
+    $results = $thisDatabase->delete($query, $dataRecord);
+
+    if($results == true) {
+        alert_success("You've successfully deleted a user.");
+    } else {
+        alert_danger("You were not able to delete a user.");
     }
 }
 ?>
@@ -51,48 +167,108 @@ if (isset($_POST["btnSubmit"])) {
                     <hr>
                     <div class="row">
                         <div class="form-group col-lg-4">
-                            <div class="form-group col-lg-4">
-                                <!-- Button trigger modal -->
-                                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-                                    Add User
-                                </button>
-                            </div>
-                            <div class="row">
-                                <ul class="list-group">
-                                    <?php build_list_from_database($thisDatabase, 'SELECT fldFirstName FROM tblUser ORDER BY fldFirstName');?>
-                                </ul>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                                Add User
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="panel panel-default">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">Users</div>
+
+                        <?php
+                        build_list_from_database($thisDatabase, 'user', 'SELECT pmkUserId,fldEmail, fldFirstName, fldLastName, fldPosition, fldWorkHours FROM tblUser '.$orderBy);
+                        ?>
+                        </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title" id="myModalLabel">Add User</h4>
+                                </div>
+                                <form role="form" method="post" action="<?php print $phpSelf; ?>">
+                                <div class="modal-body">
+                                    <div class="form-group col-lg-4">
+                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
+                                        <label>Email*</label>
+                                        <input type="email" name="txtEmail" value="<?php print $email; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>First Name*</label>
+                                        <input type="text" name="txtFirstName" value="<?php print $firstName; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label>Last Name*</label>
+                                        <input type="text" name="txtLastName" value="<?php print $lastName; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Admission Date*</label>
+                                        <input type="text" name="txtAdmissionDate" value="<?php print $admissionDate; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Position*</label>
+                                        <input type="text" name="txtPosition" value="<?php print $position; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Work Hours*</label>
+                                        <input type="text" name="txtWorkHours" value="<?php print $workHours; ?>" class="form-control" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Gender*</label>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radGender" id="radGenderMale" value="male" <?php if($gender=="male") print 'checked'?>>Male</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radGender" id="radGenderFemale" value="female" <?php if($gender=="female") print 'checked'?>>Female</label>
+                                        </div>
+                                        <div class="radio disabled">
+                                            <label><input type="radio" name="radGender" id="radGenderNone" value="none" <?php if($gender=="none") print 'checked'?>>None</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label>Role*</label>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radRole" value="admin" <?php if($role=="admin") print 'checked'?>>Admin</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input type="radio" name="radRole" value="collaborator" <?php if($role=="collaborator") print 'checked'?>>Collaborator</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row"></div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-primary" name="btnSubmit">Save</button>
+                                </div>
+                                </form>
                             </div>
                         </div>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                        <h4 class="modal-title" id="exampleModalLabel">Add User</h4>
-                                    </div>
-                                    <form role="form" method="post">
-                                    <div class="modal-body">
-                                        <div class="form-group">
-                                            <label>Email*</label>
-                                            <input type="email" name="txtEmail" class="form-control" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>First Name*</label>
-                                            <input type="text" name="txtFirstName" class="form-control" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Last Name*</label>
-                                            <input type="text" name="txtLastName" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary" name="btnSubmit">Add</button>
-                                    </div>
-                                    </form>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title" id="deleteModalLabel">Delete</h4>
                                 </div>
+                                <form role="form" method="post" action="<?php print $phpSelf; ?>">
+                                    <div class="modal-body">
+                                        <label>Are you sure you want to delete this record ?</label>
+                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
+                                    </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger" name="btnDelete">Delete</button>
+                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -101,6 +277,30 @@ if (isset($_POST["btnSubmit"])) {
         </div>
     </div>
     <!-- /.container -->
+
 <?php 
     include('footer.php');
 ?>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
+    var action = getUrlVars()["action"];
+    if(action == "edit") {
+        $('#myModal').modal('show');
+    } else if(action == "delete") {
+        $('#deleteModal').modal('show');
+    }
+});
+</script>
