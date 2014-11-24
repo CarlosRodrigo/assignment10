@@ -62,7 +62,7 @@ if (isset($_POST["btnSubmit"])) {
         if(!empty($_POST["id"])) {
             $id = $_POST["id"];
             $dataRecord[] = $id;
-            $query = 'UPDATE tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = ?, fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ? WHERE pmkUserId = ?';
+            $query = "UPDATE tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = STR_TO_DATE(?, '%m/%d/%Y'), fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ? WHERE pmkUserId = ?";
 
             $results = $thisDatabase->insert($query, $dataRecord);
 
@@ -86,7 +86,7 @@ if (isset($_POST["btnSubmit"])) {
             //$passwordSecured = sha1($password);
             $dataRecord[] = $password;
 
-            $query = 'INSERT INTO tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = ?, fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ?, fldPassword = ?';
+            $query = "INSERT INTO tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = STR_TO_DATE(?, '%m/%d/%Y'), fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ?, fldPassword = ?";
 
             $results = $thisDatabase->insert($query, $dataRecord);
 
@@ -135,7 +135,7 @@ if (isset($_POST["btnSubmit"])) {
         $email = $row[0];
         $firstName = $row[1];
         $lastName = $row[2];
-        $admissionDate = $row[3];
+        $admissionDate = date("m/d/Y", strtotime($row[3]));
         $position = $row[4];
         $workHours = $row[5];
         $gender = $row[6];
