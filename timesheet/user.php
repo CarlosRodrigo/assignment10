@@ -83,8 +83,8 @@ if (isset($_POST["btnSubmit"])) {
         } else {
 
             $password = generate_password();
-            //$passwordSecured = sha1($password);
-            $dataRecord[] = $password;
+            $securedPassword = sha1($password);
+            $dataRecord[] = $securedPassword;
 
             $query = "INSERT INTO tblUser SET fldEmail = ?, fldFirstName = ?, fldLastName = ?, fldAdmissionDate = STR_TO_DATE(?, '%m/%d/%Y'), fldPosition = ?, fldWorkHours = ?, fldGender = ?, fldType = ?, fldPassword = ?";
 

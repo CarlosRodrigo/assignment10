@@ -10,7 +10,7 @@ $dbName = strtoupper(get_current_user()) . '_Time_Sheet';
 $thisDatabase = new myDatabase($dbUserName, $whichPass, $dbName);
 
 $user_name=htmlspecialchars($_POST['user_name'],ENT_QUOTES);
-$pass=/*sha1*/($_POST['password']);
+$pass=sha1($_POST['password']);
 
 $sql="SELECT fldEmail, fldPassword, pmkUserId, fldType FROM tblUser WHERE fldEmail='".$user_name."'";
 $results = $thisDatabase->select($sql);
@@ -27,7 +27,6 @@ if(count($results) > 0) {
 		$_SESSION['userID']=$db_user_id;
 		$_SESSION['userRole']=$db_user_role;
 
-		//print_r($_SESSION);
 		header('Location: index.php');
 
 		}
