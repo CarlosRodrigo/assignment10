@@ -85,7 +85,7 @@ function build_statistics_list_from_database($thisDatabase, $fileName, $query) {
             }
         }
         print '<td>
-                <a href="' . $fileName . '.php?action=showBarChart&id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit" style="float:right"></a>
+                <a href="' . $fileName . '.php?action=showBarChart&id=' . $id .'" class="btn btn-default glyphicon glyphicon-stats" style="float:right"></a>
                 </td>';
         print "</tr>";
     }
