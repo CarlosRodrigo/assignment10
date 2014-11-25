@@ -26,8 +26,8 @@ $dbName = strtoupper(get_current_user()) . '_Time_Sheet';
 
 $thisDatabase = new myDatabase($dbUserName, $whichPass, $dbName);
 
-$query = "SELECT * FROM tblWorksOn WHERE fldDate = STR_TO_DATE(?, '%m/%d/%Y')";
-$results = $thisDatabase->select($query, array($date));
+$query = "SELECT * FROM tblWorksOn WHERE fldDate = STR_TO_DATE(?, '%m/%d/%Y') AND fnkUserId = ?";
+$results = $thisDatabase->select($query, array($date, $userId));
 
 if(count($results) > 0) {
 	$dataRecord[] = $date;

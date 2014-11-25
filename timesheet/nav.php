@@ -21,9 +21,6 @@
                     <li>
                         <a href="index.php">Home</a>
                     </li>
-                    <li>
-                        <a href="about.php">About</a>
-                    </li>
                     <?php if($_SESSION['userRole'] == 'admin') { ?>
                     <li>
                         <a href="user.php">User</a>
@@ -31,10 +28,18 @@
                     <li>
                         <a href="project.php">Project</a>
                     </li>
-                    <?php } ?>
+                    <li>
+                        <a href="statistics.php">Statistics</a>
+                    </li>
+                    <?php }
+                    if($_SESSION['userRole'] == 'collaborator') { ?>
+                    <li>
+                        <a href="about.php">About</a>
+                    </li>
                     <li>
                         <a href="contact.php">Contact</a>
                     </li>
+                    <?php } ?>
                     <li>
                         <a href="logout.php">Log out</a>
                     </li>
