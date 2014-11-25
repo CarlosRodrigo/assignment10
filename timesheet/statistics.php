@@ -74,7 +74,7 @@ if (isset($_GET["id"]) && isset($_GET["action"]) == "showBarChart") {
     include('footer.php');
 ?>
 
-<script src="js/chart.js"></script>
+<script src="js/chart.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
     function getUrlVars()
