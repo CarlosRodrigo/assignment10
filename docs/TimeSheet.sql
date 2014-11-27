@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS tblUser(
 );
 
 CREATE TABLE IF NOT EXISTS tblProject(
-pmkProjectId INT(11) NOT NULL AUTO_INCREMENT,
+    pmkProjectId INT(11) NOT NULL AUTO_INCREMENT,
     fldDescription VARCHAR(255) NOT NULL,
     fldBudget INT(11) NOT NULL,
     fldExpectedHours INT(11) NOT NULL,
@@ -61,5 +61,5 @@ CREATE TABLE IF NOT EXISTS tblWorksOn(
     
     PRIMARY KEY(pmkWorksOnId),
     FOREIGN KEY(fnkUserId) REFERENCES tblUser(pmkUserId),
-    FOREIGN KEY(fnkProjectId) REFERENCES tblUser(pmkUserId)
+    FOREIGN KEY(fnkProjectId) REFERENCES tblProject(pmkProjectId)
 );
