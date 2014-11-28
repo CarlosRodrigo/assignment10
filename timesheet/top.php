@@ -66,7 +66,8 @@
             if ($path_parts['filename'] == "index"
                 || $path_parts['filename'] == "project"
                 || $path_parts['filename'] == "user"
-                || $path_parts['filename'] == "statistics") {
+                || $path_parts['filename'] == "statistics"
+                || $path_parts['filename'] == "contact") {
                 #include "../lib/validation-functions.php";
                 #include "../lib/mail-message.php";
 
