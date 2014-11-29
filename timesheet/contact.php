@@ -57,6 +57,34 @@ if (isset($_POST["btnSubmit"])) {
 
     $country = htmlentities($_POST["txtCountry"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $country;
+} else if (isset($_GET["id"]) && isset($_GET["action"]) == "edit") {
+   
+    $id = $_GET["id"];
+    $dataRecord = array($id);
+
+    $query = "SELECT fldEmail, fldAddress, fldPhone, fldState, fldZipCode, fldCountry FROM tblContact WHERE pmkContactId = ?";
+    $results = $thisDatabase->select($query, $dataRecord);
+
+    foreach ($results as $row) {
+        $email = $row[0];
+        $address = $row[1];
+        $phone = $row[2];
+        $state = $row[3];
+        $zipCode = $row[4];
+        $country = $row[5];
+    }
+} else if (isset($_POST["btnDelete"])) {
+    $id = $_POST["id"];
+    $dataRecord = array($id);
+    $query = 'DELETE FROM tblContact WHERE pmkContactId = ?';
+
+    $results = $thisDatabase->delete($query, $dataRecord);
+
+    if($results == true) {
+        alert_success("You've successfully deleted a contact.");
+    } else {
+        alert_danger("You were not able to delete a contact.");
+    }
 }
 ?>
 
