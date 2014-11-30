@@ -45,8 +45,8 @@ function build_list_from_database($thisDatabase, $fileName, $query) {
             }
         }
         print '<td>
-                <a href="' . $fileName . '.php?action=delete&id=' . $id . '" id="btnDelete" name="btnDelete" type="submit" class="btn btn-danger" style="float:right">Delete</a>
-                <a href="' . $fileName . '.php?action=edit&id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit" style="float:right"></a>
+                <a href="' . $fileName . '.php?action=delete&id=' . $id . '" id="btnDelete" name="btnDelete" type="submit" class="btn btn-danger pull-right">Delete</a>
+                <a href="' . $fileName . '.php?action=edit&id=' . $id .'" class="btn btn-default edit glyphicon glyphicon-edit pull-right"></a>
                 </td>';
         print "</tr>";
     }
@@ -85,7 +85,7 @@ function build_statistics_list_from_database($thisDatabase, $fileName, $query) {
             }
         }
         print '<td>
-                <a href="' . $fileName . '.php?action=showBarChart&id=' . $id .'" class="btn btn-default glyphicon glyphicon-stats" style="float:right"></a>
+                <a href="' . $fileName . '.php?action=showBarChart&id=' . $id .'" class="btn btn-default glyphicon glyphicon-stats pull-right"></a>
                 </td>';
         print "</tr>";
     }

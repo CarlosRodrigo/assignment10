@@ -9,6 +9,8 @@ if(!isset($_SESSION['userID']) || $_SESSION['userRole'] != 'admin') {
     exit();
 }
 
+$orderBy = 'ORDER BY fldName';
+
 if(isset($_GET['orderBy'])) {
 	$order = htmlentities($_GET["orderBy"], ENT_QUOTES, "UTF-8");
     $orderBy = "ORDER BY ";

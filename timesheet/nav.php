@@ -34,10 +34,10 @@
                     <?php }
                     if($_SESSION['userRole'] == 'collaborator') { ?>
                     <li>
-                        <a href="about.php">About</a>
+                        <a href="contact.php">Contact</a>
                     </li>
                     <li>
-                        <a href="contact.php">Contact</a>
+                        <a href="about.php">About</a>
                     </li>
                     <?php } ?>
                     <li>

@@ -29,13 +29,40 @@ if (isset($_POST["btnResetPassword"])) {
     $dataRecord = array();
 
     $password = htmlentities($_POST["txtPreviousPassword"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $password;
 
     $newPassword = htmlentities($_POST["txtPassword"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $newPassword;
 
     $confirmPassword = htmlentities($_POST["txtConfirmPassword"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $confirmPassword;
+
+    $password = sha1($password);
+    $newPassword = sha1($newPassword);
+    $confirmPassword = sha1($confirmPassword);
+
+    $query = "SELECT fldPassword FROM tblUser WHERE pmkUserId = '".$userId."'";
+    $results = $thisDatabase->select($query);
+    $db_password = $results[0][0];
+
+    if($password == $db_password) {
+        if($newPassword == $confirmPassword) {
+            $dataRecord[] = $newPassword;
+            $dataRecord[] = $userId;
+
+            $query = "UPDATE tblUser SET fldPassword = ? WHERE pmkUserId = ?";
+
+            $results = $thisDatabase->update($query, $dataRecord);
+
+            if($results == true) {
+                alert_success("You've successfully changed your password.");
+            } else {
+                alert_danger("You were not able to change your password.");
+            }
+        } else {
+            alert_danger("New password does not match confirm password.");
+        }
+    } else {
+        alert_danger("Wrong password.");
+    }
+
 }
 
 if (isset($_POST["btnSubmit"])) {
@@ -151,14 +178,12 @@ if (isset($_POST["btnSubmit"])) {
 
                     <div class="row">
                         <div class="form-group col-lg-4">
-                            <!-- Button trigger modal -->
+                            <!-- Button trigger add contact modal -->
                             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
                                 Add Contact
                             </button>
-                        </div>
-                        <div class="form-group col-lg-4">
-                            <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-default btn-lg" data-toggle="modal" data-target="#resetPasswordModal">
+                            <!-- Button trigger reset password modal -->
+                            <button type="button" class="btn btn-default btn-lg pull-right" data-toggle="modal" data-target="#resetPasswordModal">
                                 Reset Password
                             </button>
                         </div>
@@ -231,15 +256,17 @@ if (isset($_POST["btnSubmit"])) {
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <label>Password*</label>
-                                        <input type="password" name="txtPreviousPassword" class="form-control" required>
+                                        <input type="password" name="txtPreviousPassword" id="txtPreviousPassword" class="form-control" aria-invalid="false" required>
                                     </div>
                                     <div class="form-group">
                                         <label>New Password*</label>
-                                        <input type="password" name="txtPassword" class="form-control" required>
+                                        <input type="password" name="txtPassword" id="txtPassword" class="form-control" aria-invalid="false" required>
                                     </div>
                                     <div class="form-group">
                                         <label>Confirm Password*</label>
-                                        <input type="password" name="txtConfirmPassword" class="form-control" required>
+                                        <input type="password" name="txtConfirmPassword" id="txtConfirmPassword" class="form-control" aria-invalid="false" 
+                                        data-validation-match-match="txtPassword" data-validation-match-message="New password must match Confirm Password">
+                                        <p class="help-block"></p>
                                     </div>
                                 </div>
                                 <div class="modal-footer">

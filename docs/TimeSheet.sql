@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS tblProject(
 CREATE TABLE IF NOT EXISTS tblWorksOn(
     pmkWorksOnId INT(11) NOT NULL AUTO_INCREMENT,
     fldDate DATE NOT NULL,
-    fldHours INT(11) NOT NULL,
+    fldHours TIME NOT NULL,
     fldDescription VARCHAR(255) NOT NULL,
     
     fnkUserId INT(11) NOT NULL,
