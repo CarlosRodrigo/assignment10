@@ -18,6 +18,7 @@ $country = "";
 $orderBy = 'ORDER BY fldEmail';
 
 $hiddenId = $_GET["id"];
+$userId = $_SESSION['userID'];
 
 if(isset($_GET['orderBy'])) {
     $orderBy = "ORDER BY ";
@@ -57,6 +58,55 @@ if (isset($_POST["btnSubmit"])) {
 
     $country = htmlentities($_POST["txtCountry"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $country;
+
+    $dataRecord[] = $userId;
+
+    if ($email == "") {
+        $emailERROR = true;
+        alert_danger("You were not able to add a user.");
+    } else {
+        $query = 'SELECT * FROM tblUser WHERE fldEmail = ?';
+        $results = $thisDatabase->select($query, array($email));
+        if(!empty($_POST["id"])) {
+            $id = $_POST["id"];
+            $dataRecord[] = $id;
+
+            $query = "UPDATE tblContact SET fldEmail = ?, fldAddress = ?, fldPhone = ?, fldState = ?, fldZipCode = ?, fldCountry = ?, fnkUserId = ? WHERE pmkContactId = ?";
+
+            $results = $thisDatabase->update($query, $dataRecord);
+
+            if($results == true) {
+                alert_success("You've successfully updated a contact.");
+            } else {
+                alert_danger("You were not able to update a contact.");
+            }
+            $email = "";
+            $address = "";
+            $phone = "";
+            $state = "";
+            $zipCode = "";
+            $country = "";
+            $orderBy = 'ORDER BY fldEmail';
+        } else {
+
+            $query = "INSERT INTO tblContact SET fldEmail = ?, fldAddress = ?, fldPhone = ?, fldState = ?, fldZipCode = ?, fldCountry = ?, fnkUserId = ?";
+
+            $results = $thisDatabase->insert($query, $dataRecord);
+
+            if($results == true) {
+                alert_success("You've successfully added a contact.");
+            } else {
+                alert_danger("You were not able to add a contact.");
+            }
+            $email = "";
+            $address = "";
+            $phone = "";
+            $state = "";
+            $zipCode = "";
+            $country = "";
+            $orderBy = 'ORDER BY fldEmail';
+        }
+    }
 } else if (isset($_GET["id"]) && isset($_GET["action"]) == "edit") {
    
     $id = $_GET["id"];
