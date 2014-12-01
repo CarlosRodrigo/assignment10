@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS tblCompany(
     pmkCompanyId INT(11) NOT NULL AUTO_INCREMENT,
     fldCompanyName VARCHAR(50) NOT NULL,
-    fldFilePath VARCHAR(50) NOT NULL,
+    fldFilePath VARCHAR(50),
     
     PRIMARY KEY(pmkCompanyId)
 );
