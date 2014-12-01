@@ -29,36 +29,51 @@ $userId = $_SESSION['userID'];
                         $startDate = $thisDatabase->select($query, array($userId));
                         $date = date("m/d/Y", strtotime($startDate[0][0]));
 
-                        $query = "SELECT fldHours, fldDescription, fnkProjectId FROM tblWorksOn WHERE fnkUserId = ?";
+                        $query = "SELECT fldDate, fldHours, fldDescription, fnkProjectId FROM tblWorksOn WHERE fnkUserId = ? ORDER BY fldDate";
                         $results = $thisDatabase->select($query, array($userId));
-                        for($i = 0; $i < 20; $i++) {
-                            $date = date("m/d/Y", strtotime($date . " + 1 day"));
+                        $recorded = false;
+                        $i = 0;
+
+                        $date = date("m/d/Y", strtotime($date));
+                        $dateFromDB = date("m/d/Y", strtotime($results[$i]['fldDate']));
+                        for($dates = 0; $dates < 20; $dates++) {
+                            if($date == $dateFromDB) {
+                                $i++;
+                                $recorded = true;
+                            } else {
+                                $recorded = false;
+                            }
                         ?>
                         <li class="note">
                             <form name="sentMessage" id="noteFrom" novalidate>
                                 <div class="form-group">
                                     <input type="hidden" name="id" value="<?php print $userId ?>"></input>
                                     <label>Date</label>
-                                    <input type="text" class="form-control" value="<?php print $date ?>" id="txtDate" name="txtDate" required data-validation-required-message="required." readonly>
+                                    <input type="text" class="form-control" value="<?php print $date . ' - ' . date("D", strtotime($date)) ?>" id="txtDate" name="txtDate" required data-validation-required-message="required." readonly>
                                 </div>
                                 <div class="form-group">
                                     <label>Project*</label>
                                     <select class="form-control" id="slcProject" name="slcProject" required data-validation-required-message="required.">
-                                        <?php build_select_from_database($thisDatabase, 'SELECT pmkProjectId, fldName FROM tblProject ORDER BY fldName', $results[$i]['fnkProjectId']); ?>
+                                        <?php 
+                                        if($recorded == true)
+                                            build_select_from_database($thisDatabase, 'SELECT pmkProjectId, fldName FROM tblProject ORDER BY fldName', $results[$i-1]['fnkProjectId']);
+                                        else
+                                            build_select_from_database($thisDatabase, 'SELECT pmkProjectId, fldName FROM tblProject ORDER BY fldName', '')
+                                         ?>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label>Hours*</label>
-                                    <input type="text" class="form-control" value="<?php print $results[$i]['fldHours'] ?>" placeholder="04:00" id="txtHours" name="txtHours" required data-validation-required-message="required.">
+                                    <input type="text" class="form-control" value="<?php if($recorded == true) print $results[$i-1]['fldHours'] ?>" placeholder="04:00" id="txtHours" name="txtHours" required data-validation-required-message="required.">
                                     <p class="help-block text-danger"></p>
                                 </div>
                                 <div class="form-group">
                                     <label>Description</label>
-                                    <textarea class="form-control" id="txtDescription" name="txtDescription"><?php print $results[$i]['fldDescription']; ?></textarea>
+                                    <textarea class="form-control" id="txtDescription" name="txtDescription"><?php if($recorded == true) print $results[$i-1]['fldDescription']; ?></textarea>
                                     <p class="help-block text-danger"></p>
                                 </div>
+                                <div class="success"></div>
                                 <div class="col-lg-12 text-center">
-                                    <div id="success"></div>
                                     <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">
                                         +
                                     </button>
@@ -68,7 +83,11 @@ $userId = $_SESSION['userID'];
                                 </div>
                             </form>
                         </li>
-                        <?php }?>
+                        <?php 
+                            $date = date("m/d/Y", strtotime($date . " + 1 day"));
+                            $dateFromDB = date("m/d/Y", strtotime($results[$i]['fldDate']));
+                        }
+                        ?>
                     </ul>
                 <div class="clearfix"></div>
             </div>
@@ -125,28 +144,25 @@ include('footer.php');
                     description: description
                 },
                 cache: false,
-                success: function() {
+                success: function(description) {
                     // Success message
-                    $('#success').html("<div class='alert alert-success'>");
-                    $('#success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+                    $('.success').html("<div class='alert alert-success'>");
+                    $('.success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                         .append("</button>");
-                    $('#success > .alert-success')
+                    $('.success > .alert-success')
                         .append("<strong>Time saved. </strong>");
-                    $('#success > .alert-success')
+                    $('.success > .alert-success')
                         .append('</div>');
-
-                    //clear all fields
-                    $('#NoteForm').trigger("reset");
+                    window.setTimeout(function() { $('.success').html(''); }, 2000);
                 },
                 error: function() {
                     // Fail message
-                    $('#success').html("<div class='alert alert-danger'>");
-                    $('#success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
+                    $('.success').html("<div class='alert alert-danger'>");
+                    $('.success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
                         .append("</button>");
-                    $('#success > .alert-danger').append("<strong>Sorry, it seems that the server is not responding. Please try again later!");
-                    $('#success > .alert-danger').append('</div>');
-                    //clear all fields
-                    $('#NoteForm').trigger("reset");
+                    $('.success > .alert-danger').append("<strong>Sorry, it seems that the server is not responding. Please try again later!");
+                    $('.success > .alert-danger').append('</div>');
+                    window.setTimeout(function() { $('.success').html(''); }, 2000);
                 },
             })
         },

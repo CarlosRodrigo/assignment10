@@ -9,60 +9,41 @@ if(!isset($_SESSION['userID']) || $_SESSION['userRole'] != 'admin') {
     exit();
 }
 
-$projectName = "";
-$budget = "";
-$expectedHours = "";
-$description = "";
-$orderBy = 'ORDER BY fldName';
+$companyName = "";
 
 $hiddenId = $_GET["id"];
-
-if(isset($_GET['orderBy'])) {
-    $orderBy = "ORDER BY ";
-    $orderBy .= htmlentities($_GET["orderBy"], ENT_QUOTES, "UTF-8");
-}
 
 if (isset($_POST["btnSubmit"])) {
 
     $dataRecord = array();
 
-    $projectName = htmlentities($_POST["txtProjectName"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $projectName;
+    $companyName = htmlentities($_POST["txtCompanyName"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $companyName;
 
-    $budget = htmlentities($_POST["txtBudget"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $budget;
-
-    $expectedHours = htmlentities($_POST["txtExpectedHours"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $expectedHours;
-
-    $description = htmlentities($_POST["txtDescription"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $description;
-
-    if ($projectName == "") {
-        $emailERROR = true;
+    if ($companyName == "") {
         alert_danger("You were not able to add a project.");
     } else {
         if(!empty($_POST["id"])) {
             $id = $_POST["id"];
             $dataRecord[] = $id;
-            $query = 'UPDATE tblProject SET fldName = ?, fldBudget = ?, fldExpectedHours = ?, fldDescription = ? WHERE pmkProjectId = ?';
+            $query = 'UPDATE tblCompany SET fldCompanyName = ? WHERE pmkCompanyId = ?';
 
             $results = $thisDatabase->update($query, $dataRecord);
 
             if($results == true) {
-                alert_success("You've successfully updated a project.");
+                alert_success("You've successfully updated a company.");
             } else {
-                alert_danger("You were not able to updated a project.");
+                alert_danger("You were not able to update a company.");
             }
         } else {
-            $query = 'INSERT INTO tblProject SET fldName = ?, fldBudget = ?, fldExpectedHours = ?, fldDescription = ?';
+            $query = 'INSERT INTO tblCompany SET fldCompanyName = ?';
 
             $results = $thisDatabase->insert($query, $dataRecord);
 
             if($results == true) {
-                alert_success("You've successfully add a project.");
+                alert_success("You've successfully add a company.");
             } else {
-                alert_danger("You were not able to add a project.");
+                alert_danger("You were not able to add a company.");
             }
         }
     }
@@ -71,26 +52,23 @@ if (isset($_POST["btnSubmit"])) {
     $id = $_GET["id"];
     $dataRecord = array($id);
 
-    $query = "SELECT fldName, fldBudget, fldExpectedHours, fldDescription FROM tblProject WHERE pmkProjectId = ?";
+    $query = "SELECT fldCompanyName FROM tblCompany WHERE pmkCompanyId = ?";
     $results = $thisDatabase->select($query, $dataRecord);
 
     foreach ($results as $row) {
-        $projectName = $row["fldName"];
-        $budget = $row["fldBudget"];
-        $expectedHours = $row["fldExpectedHours"];
-        $description = $row["fldDescription"];
+        $companyName = $row["fldCompanyName"];
     }
 } else if (isset($_POST["btnDelete"])) {
     $id = $_POST["id"];
     $dataRecord = array($id);
-    $query = 'DELETE FROM tblProject WHERE pmkProjectId = ?';
+    $query = 'DELETE FROM tblCompany WHERE pmkCompanyId = ?';
 
     $results = $thisDatabase->delete($query, $dataRecord);
 
     if($results == true) {
-        alert_success("You've successfully deleted a project.");
+        alert_success("You've successfully deleted a company.");
     } else {
-        alert_danger("You were not able to delete a project.");
+        alert_danger("You were not able to delete a company.");
     }
 }
 
@@ -102,22 +80,29 @@ if (isset($_POST["btnSubmit"])) {
             <div class="box">
                 <div class="col-lg-12">
                     <hr>
-                    <h2 class="intro-text text-center"><strong>Project</strong></h2>
+                    <h2 class="intro-text text-center"><strong>Company</strong></h2>
                     <hr>
                     <div class="row">
                         <div class="form-group col-lg-4">
                             <!-- Button trigger modal -->
+                            <!--<a href="company.php?action=edit&id=1" class="btn btn-default edit">Edit info</a>-->
+                            <?php 
+                            $query = 'SELECT pmkCompanyId, fldCompanyName FROM tblCompany';
+                            $results = $thisDatabase->select($query);
+                            if(count($results) == 0) {
+                            ?>
                             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-                                Add Project
+                                Add Company
                             </button>
+                            <?php } ?>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="panel panel-default">
                         <!-- Default panel contents -->
-                        <div class="panel-heading">Projects</div>
-                            <?php build_list_from_database($thisDatabase, 'project', 'SELECT pmkProjectId, fldName, fldBudget, fldExpectedHours FROM tblProject '.$orderBy);?>
+                        <div class="panel-heading">Company info</div>
+                        <?php build_list_from_database($thisDatabase, 'company', 'SELECT pmkCompanyId, fldCompanyName FROM tblCompany');?>
                         </div>
                     </div>
 
@@ -127,26 +112,14 @@ if (isset($_POST["btnSubmit"])) {
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                    <h4 class="modal-title" id="myModalLabel">Add Project</h4>
+                                    <h4 class="modal-title" id="myModalLabel">Company</h4>
                                 </div>
                                 <form role="form" method="post" action="<?php print $phpSelf; ?>">
                                 <div class="modal-body">
                                     <div class="form-group">
                                         <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
-                                        <label>Project Name*</label>
-                                        <input type="text" name="txtProjectName" value="<?php print $projectName; ?>" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Budget*</label>
-                                        <input type="text" name="txtBudget" value="<?php print $budget; ?>" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Expected Hours*</label>
-                                        <input type="text" name="txtExpectedHours" value="<?php print $expectedHours; ?>" class="form-control" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Description*</label>
-                                        <textarea name="txtDescription" class="form-control" rows="6" required><?php print $description; ?></textarea>
+                                        <label>Company Name*</label>
+                                        <input type="text" name="txtCompanyName" value="<?php print $companyName; ?>" class="form-control" required>
                                     </div>
                                 </div>
                                 <div class="modal-footer">

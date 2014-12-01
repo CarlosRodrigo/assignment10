@@ -25,9 +25,20 @@ $whichPass = "w"; //flag for which one to use.
 $dbName = strtoupper(get_current_user()) . '_Time_Sheet';
 
 $thisDatabase = new myDatabase($dbUserName, $whichPass, $dbName);
-$query = "INSERT INTO tblWorksOn SET fldDate = STR_TO_DATE(?, '%m/%d/%Y'), fnkUserId = ?, fnkProjectId = ?, fldHours = ?, fldDescription = ?";
 
-$results = $thisDatabase->insert($query, $dataRecord);
+$query = "SELECT * FROM tblWorksOn WHERE fldDate = STR_TO_DATE(?, '%m/%d/%Y') AND fnkUserId = ?";
+$results = $thisDatabase->select($query, array($date, $userId));
+
+if(count($results) > 0) {
+	$dataRecord[] = $date;
+	$query = "UPDATE tblWorksOn SET fldDate = STR_TO_DATE(?, '%m/%d/%Y'), fnkUserId = ?, fnkProjectId = ?, fldHours = ?, fldDescription = ? WHERE fldDate = STR_TO_DATE(?, '%m/%d/%Y')";
+
+	$results = $thisDatabase->update($query, $dataRecord);
+} else {
+	$query = "INSERT INTO tblWorksOn SET fldDate = STR_TO_DATE(?, '%m/%d/%Y'), fnkUserId = ?, fnkProjectId = ?, fldHours = ?, fldDescription = ?";
+
+	$results = $thisDatabase->insert($query, $dataRecord);
+}
 
 return true;
 

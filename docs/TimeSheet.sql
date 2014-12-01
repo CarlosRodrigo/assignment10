@@ -1,27 +1,13 @@
-CREATE TABLE IF NOT EXISTS tblContact(
-    pmkContactId INT(11) NOT NULL AUTO_INCREMENT,
-    fldEmail VARCHAR(50) NOT NULL,
-    fldPhone VARCHAR(20) NOT NULL,
-    fldAddress VARCHAR(50) NOT NULL,
-    fldState VARCHAR(20) NOT NULL,
-    fldZipCode VARCHAR(20) NOT NULL,
-    fldCountry VARCHAR(20) NOT NULL,
-    
-    PRIMARY KEY(pmkContactId)
-);
-
 CREATE TABLE IF NOT EXISTS tblCompany(
     pmkCompanyId INT(11) NOT NULL AUTO_INCREMENT,
     fldCompanyName VARCHAR(50) NOT NULL,
-    fldFilePath VARCHAR(50) NOT NULL,
-    fnkContactId INT(11) NOT NULL,
+    fldFilePath VARCHAR(50),
     
-    PRIMARY KEY(pmkCompanyId),
-    FOREIGN KEY(fnkContactId) REFERENCES tblContact(pmkContactId)
+    PRIMARY KEY(pmkCompanyId)
 );
 
 CREATE TABLE IF NOT EXISTS tblUser(
-	pmkUserId INT(11) NOT NULL AUTO_INCREMENT,
+    pmkUserId INT(11) NOT NULL AUTO_INCREMENT,
     fldEmail VARCHAR(50) NOT NULL,
     fldPassword VARCHAR(50) NOT NULL,
     fldFirstName VARCHAR(30) NOT NULL,
@@ -31,20 +17,18 @@ CREATE TABLE IF NOT EXISTS tblUser(
     fldAdmissionDate DATE NOT NULL,
     fldPosition VARCHAR(20) NOT NULL,
     fldWorkHours INT(11) NOT NULL,
-    fnkCompanyId INT(11) NOT NULL,
     
-    PRIMARY KEY(pmkUserId),
-    FOREIGN KEY(fnkCompanyId) REFERENCES tblCompany(pmkCompanyId)
+    PRIMARY KEY(pmkUserId)
 );
 
 CREATE TABLE IF NOT EXISTS tblProject(
-pmkProjectId INT(11) NOT NULL AUTO_INCREMENT,
+    pmkProjectId INT(11) NOT NULL AUTO_INCREMENT,
+    fldName VARCHAR(50) NOT NULL,
     fldDescription VARCHAR(255) NOT NULL,
     fldBudget INT(11) NOT NULL,
     fldExpectedHours INT(11) NOT NULL,
-    fldPDFFilePath VARCHAR(50) NOT NULL,
     
-    fnkCompanyId INT(11) NOT NULL,
+    fnkCompanyId INT(11),
     
     PRIMARY KEY(pmkProjectId),
     FOREIGN KEY(fnkCompanyId) REFERENCES tblCompany(pmkCompanyId)
@@ -53,7 +37,7 @@ pmkProjectId INT(11) NOT NULL AUTO_INCREMENT,
 CREATE TABLE IF NOT EXISTS tblWorksOn(
     pmkWorksOnId INT(11) NOT NULL AUTO_INCREMENT,
     fldDate DATE NOT NULL,
-    fldHours INT(11) NOT NULL,
+    fldHours TIME NOT NULL,
     fldDescription VARCHAR(255) NOT NULL,
     
     fnkUserId INT(11) NOT NULL,
@@ -61,5 +45,19 @@ CREATE TABLE IF NOT EXISTS tblWorksOn(
     
     PRIMARY KEY(pmkWorksOnId),
     FOREIGN KEY(fnkUserId) REFERENCES tblUser(pmkUserId),
-    FOREIGN KEY(fnkProjectId) REFERENCES tblUser(pmkUserId)
+    FOREIGN KEY(fnkProjectId) REFERENCES tblProject(pmkProjectId)
+);
+
+CREATE TABLE IF NOT EXISTS tblContact(
+    pmkContactId INT(11) NOT NULL AUTO_INCREMENT,
+    fldEmail VARCHAR(50) NOT NULL,
+    fldPhone VARCHAR(20) NOT NULL,
+    fldAddress VARCHAR(50) NOT NULL,
+    fldState VARCHAR(20) NOT NULL,
+    fldZipCode VARCHAR(20) NOT NULL,
+    fldCountry VARCHAR(20) NOT NULL,
+    fnkUserId INT(11) NOT NULL,
+    
+    PRIMARY KEY(pmkContactId),
+    FOREIGN KEY(fnkUserId) REFERENCES tblUser(pmkUserId)
 );
