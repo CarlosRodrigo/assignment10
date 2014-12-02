@@ -31,7 +31,8 @@ $results = $thisDatabase->select($query, array($date, $userId));
 
 if(count($results) > 0) {
 	$dataRecord[] = $date;
-	$query = "UPDATE tblWorksOn SET fldDate = STR_TO_DATE(?, '%m/%d/%Y'), fnkUserId = ?, fnkProjectId = ?, fldHours = ?, fldDescription = ? WHERE fldDate = STR_TO_DATE(?, '%m/%d/%Y')";
+	$dataRecord[] = $userId;
+	$query = "UPDATE tblWorksOn SET fldDate = STR_TO_DATE(?, '%m/%d/%Y'), fnkUserId = ?, fnkProjectId = ?, fldHours = ?, fldDescription = ? WHERE fldDate = STR_TO_DATE(?, '%m/%d/%Y') AND fnkUserId = ?";
 
 	$results = $thisDatabase->update($query, $dataRecord);
 } else {

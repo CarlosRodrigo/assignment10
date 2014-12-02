@@ -237,7 +237,7 @@ if (isset($_POST["btnSubmit"])) {
                         <div class="panel-heading">Contacts</div>
 
                         <?php
-                        build_list_from_database($thisDatabase, 'contact', 'SELECT pmkContactId, fldEmail, fldPhone, fldAddress, fldState, fldZipCode, fldCountry FROM tblContact '.$orderBy);
+                        build_list_from_database($thisDatabase, 'contact', 'SELECT pmkContactId, fldEmail, fldPhone, fldAddress, fldState, fldZipCode, fldCountry FROM tblContact WHERE fnkUserId = ' . $userId . ' '.$orderBy);
                         ?>
                         </div>
                     </div>

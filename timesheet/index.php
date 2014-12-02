@@ -36,7 +36,7 @@ $userId = $_SESSION['userID'];
 
                         $date = date("m/d/Y", strtotime($date));
                         $dateFromDB = date("m/d/Y", strtotime($results[$i]['fldDate']));
-                        for($dates = 0; $dates < 20; $dates++) {
+                        for($dates = 0; $dates < 100; $dates++) {
                             if($date == $dateFromDB) {
                                 $i++;
                                 $recorded = true;
@@ -65,7 +65,7 @@ $userId = $_SESSION['userID'];
                                 <div class="form-group">
                                     <label>Hours*</label>
                                     <input type="text" class="form-control" value="<?php if($recorded == true) print $results[$i-1]['fldHours'] ?>" placeholder="04:00" id="txtHours" name="txtHours" required data-validation-required-message="required.">
-                                    <p class="help-block text-danger"></p>
+                                    <p class="help-block text-danger" style="font-size:12px"></p>
                                 </div>
                                 <div class="form-group">
                                     <label>Description</label>
@@ -89,6 +89,26 @@ $userId = $_SESSION['userID'];
                         }
                         ?>
                     </ul>
+                    <!-- Success Modal -->
+                    <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title" id="alertModalLabel">Success</h4>
+                                </div>
+                                <form role="form" method="post" action="<?php print $phpSelf; ?>">
+                                    <div class="modal-body">
+                                        <label id="modalMessage">Time saved</label>
+                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
+                                    </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 <div class="clearfix"></div>
             </div>
         </div>
@@ -146,23 +166,15 @@ include('footer.php');
                 cache: false,
                 success: function(description) {
                     // Success message
-                    $('.success').html("<div class='alert alert-success'>");
-                    $('.success > .alert-success').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                        .append("</button>");
-                    $('.success > .alert-success')
-                        .append("<strong>Time saved. </strong>");
-                    $('.success > .alert-success')
-                        .append('</div>');
-                    window.setTimeout(function() { $('.success').html(''); }, 2000);
+                    $('#alertModal').modal('show');
+                    window.setTimeout(function() { $('#alertModal').modal('hide'); }, 2000);
                 },
                 error: function() {
                     // Fail message
-                    $('.success').html("<div class='alert alert-danger'>");
-                    $('.success > .alert-danger').html("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;")
-                        .append("</button>");
-                    $('.success > .alert-danger').append("<strong>Sorry, it seems that the server is not responding. Please try again later!");
-                    $('.success > .alert-danger').append('</div>');
-                    window.setTimeout(function() { $('.success').html(''); }, 2000);
+                    $('#alertModal').modal('show');
+                    $('#alertModalLabel').html('Save Failed');
+                    $('#modalMessage').html('You were not able to save time');
+                    window.setTimeout(function() { $('#alertModal').modal('hide'); }, 2000);
                 },
             })
         },

@@ -42,9 +42,6 @@ $companyName = $results[0][0];
                 <li>
                     <a href="contact.php">Contact</a>
                 </li>
-                <li>
-                    <a href="about.php">About</a>
-                </li>
                 <?php } ?>
                 <li>
                     <a href="logout.php">Log out</a>
