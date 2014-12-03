@@ -2,13 +2,11 @@
 include("top.php");
 //include("header.php"); 
 include("nav.php");
-<<<<<<< HEAD
 
 if (!isset($_SESSION['userID'])) {
     header('location: login.php');
     exit();
 }
-=======
 include("lib/functions.php");
 
 if(!isset($_SESSION['userID'])) {
@@ -170,12 +168,10 @@ if (isset($_POST["btnSubmit"])) {
         alert_danger("You were not able to delete a contact.");
     }
 }
->>>>>>> FETCH_HEAD
 ?>
 
 <div class="container">
 
-<<<<<<< HEAD
     <div class="row">
         <div class="box">
             <div class="col-lg-12">
@@ -208,7 +204,6 @@ if (isset($_POST["btnSubmit"])) {
                         </div>
                     </div>
                 </form>
-=======
         <div class="row">
             <div class="box">
                 <div class="col-lg-12">
@@ -252,7 +247,7 @@ if (isset($_POST["btnSubmit"])) {
                                 </div>
                                 <form role="form" method="post" action="<?php print $phpSelf; ?>">
                                     <div class="form-group col-lg-4">
-                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
+                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>">
                                         <label>Email*</label>
                                         <input type="email" name="txtEmail" value="<?php print $email; ?>" class="form-control" required>
                                     </div>
@@ -331,7 +326,7 @@ if (isset($_POST["btnSubmit"])) {
                                 <form role="form" method="post" action="<?php print $phpSelf; ?>">
                                     <div class="modal-body">
                                         <label>Are you sure you want to delete this record ?</label>
-                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>"></input>
+                                        <input type="hidden" name="id" value="<?php print $hiddenId ?>">
                                     </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -343,12 +338,10 @@ if (isset($_POST["btnSubmit"])) {
                     </div>
 
                 </div>
->>>>>>> FETCH_HEAD
             </div>
         </div>
     </div>
 
-<<<<<<< HEAD
 </div>
 <!-- /.container -->
 
@@ -382,4 +375,3 @@ $(document).ready(function() {
     }
 });
 </script>
->>>>>>> FETCH_HEAD

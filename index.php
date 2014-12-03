@@ -16,7 +16,13 @@
             <ul>
                 
                 <li><a href="timesheet/index.php">Home Page.</a></li>
-                <li><a href="https://docs.google.com/document/d/1cpIWc20kskNAzeqlEUIORZwZhxTRvCdcnUetlK5xsxc/edit">Document Specifications.</a></li>
+                <li>Document Specifications: 
+                    <ul>
+                        <li><a href="https://docs.google.com/document/d/1cpIWc20kskNAzeqlEUIORZwZhxTRvCdcnUetlK5xsxc/edit">[Google Doc] </a></li>
+                        <li><a href="docs/documentspecifications.pdf">[PDF]</a></li>
+                        <li><a href="docs/documentspecifications.docx">[docx]</a></li>
+                    </ul>
+                </li>
                 <li><a href="https://github.com/cluth11/assignment10">Project Repository.</a></li>
                 <li><a href="docs/TimeSheet.sql">Schema.</a></li>
                 <li><a href="docs/TimeSheet_ER_Diagram.png">Entity Relationship Diagram.</a></li>
