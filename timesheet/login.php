@@ -32,13 +32,7 @@ include("lib/functions.php");
                     </div>
                 </form>
             </div>
-        </div>
-        
-        <!--Instructions for grader sign-in. VERY IMPORTANT: remove after graded!-->
-        <pre style="color:blue;">
-            <strong>Note for grader: </strong>Username: "admin" Password: "123"
-        </pre>
-        
+        </div>   
     </div>
 </div> <!-- /container -->
 
